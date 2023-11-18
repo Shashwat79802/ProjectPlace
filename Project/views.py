@@ -3,15 +3,12 @@ from .serializers import PostProjectSerializer, GetAllProjectSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.db.models import Subquery, OuterRef
 from django.http import Http404
 
 
 class ProjectList(APIView):
     def get(self, request):
-        projects = Project.objects.annotate(
-            first_image=Subquery(ProjectsImage.objects.filter(project_id=OuterRef('id')).values('image')[:1])
-        ).values("id", "name", "price", "first_image")
+        projects = Project.objects.all()
         serializer = GetAllProjectSerializer(projects, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -33,6 +30,4 @@ class ProjectDetail(APIView):
     def get(self, request, id):
         project = self.get_project_instance(id)
         serializer = PostProjectSerializer(project, many=False)
-        print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
-

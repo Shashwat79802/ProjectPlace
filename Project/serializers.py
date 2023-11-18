@@ -29,12 +29,13 @@ class PostProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ["id", "name", "price", "description", "images", "uploaded_images", "documents", "uploaded_documents"]
-        # fields = ["id", "name", "price", "description", "uploaded_images", "uploaded_documents"]
+        fields = ["id", "name", "price", "description", "images", "uploaded_images", "documents", "uploaded_documents", "application_type", "tech_stack"]
 
     def create(self, validated_data):
         uploaded_images = validated_data.pop("uploaded_images")
         uploaded_documents = validated_data.pop("uploaded_documents")
+        uploaded_application_type = validated_data.pop("application_type")
+        uploaded_tech_stack = validated_data.pop("tech_stack")
 
         project = Project.objects.create(**validated_data)
 
@@ -42,16 +43,24 @@ class PostProjectSerializer(serializers.ModelSerializer):
             ProjectsImage.objects.create(project=project, image=image)
         for document in uploaded_documents:
             ProjectsDocument.objects.create(project=project, document=document)
+        for application_type in uploaded_application_type:
+            project.application_type.add(application_type)
+        for tech_stack in uploaded_tech_stack:
+            project.tech_stack.add(tech_stack)
 
         return project
 
 
 class GetAllProjectSerializer(serializers.ModelSerializer):
-    first_image = serializers.FilePathField(read_only=True, path='/media')
+    first_image = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
         fields = ['id', 'name', 'price', 'first_image']
 
+    def get_first_image(self, obj):
+        first_image = obj.images.first()
+        if first_image:
+            return  first_image.image.url
+        return None
 
-# class GetProjectSerializer(ser)
