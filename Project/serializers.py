@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Project, ProjectsDocument, ProjectsImage
+from .models import Project, ProjectsDocument, ProjectsImage, ApplicationType, TechStack
 
 
 class ProjectsImageSerializer(serializers.ModelSerializer):
@@ -30,6 +30,14 @@ class PostProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ["id", "name", "price", "description", "images", "uploaded_images", "documents", "uploaded_documents", "application_type", "tech_stack"]
+        depth = 1
+
+
+    def validate_application_type(self, data):
+        if len(data) > 3:
+            raise serializers.ValidationError("Chosen application type can't be more than 3")
+        return data
+
 
     def create(self, validated_data):
         uploaded_images = validated_data.pop("uploaded_images")
@@ -61,6 +69,6 @@ class GetAllProjectSerializer(serializers.ModelSerializer):
     def get_first_image(self, obj):
         first_image = obj.images.first()
         if first_image:
-            return  first_image.image.url
+            return first_image.image.url
         return None
 

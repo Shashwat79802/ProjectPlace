@@ -21,25 +21,14 @@ from django.conf.urls.static import static
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
+from rest_framework import routers
 
-schema_view = get_schema_view(
-    openapi.Info(
-        title="Project Place",
-        default_version='v1',
-        description="Your API description",
-        terms_of_service="https://www.yourapp.com/terms/",
-        contact=openapi.Contact(email="shashwatg79802@gmail.com"),
-        license=openapi.License(name="Your License"),
-    ),
-    public=True,
-    permission_classes=[permissions.AllowAny,],
-)
+router = routers.DefaultRouter()
 
 urlpatterns = ([
     path('admin/', admin.site.urls),
     path('api/v2/projects/', include('Project.urls'), name='Project URLs'),
-    path('swagger<str:format>', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    # path('api/v2/projects/', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls'))
 ])
 # urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT))
