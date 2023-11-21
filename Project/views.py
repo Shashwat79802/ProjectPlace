@@ -6,10 +6,12 @@ from rest_framework import status
 from django.http import Http404
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from django.db.models import Q
+from .paginatiors import CustomPaginator
 
 
 class ProjectList(APIView):
     renderer_classes = [JSONRenderer, BrowsableAPIRenderer]
+    pagination_class = CustomPaginator
 
     def get(self, request):
         category_filter = request.query_params.getlist('category', [])
@@ -28,8 +30,6 @@ class ProjectList(APIView):
             price_max_filter = price_max_filter if price_max_filter is not None else 999999
             filter_condition &= Q(price__range=(price_min_filter, price_max_filter))
 
-        print(filter_condition)
-
         if filter_condition:
             projects = Project.objects.filter(filter_condition).distinct()
             if not projects: # if no projects are found after applying the filter, raise not found error
@@ -37,24 +37,12 @@ class ProjectList(APIView):
         else:
             projects = Project.objects.all()
 
-        serializer = GetAllProjectSerializer(projects, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-        # category_technology_filter_applied = False
-
-        # if category_filter and technology_filter and price_max_filter and price_max_filter:
-        #     projects = Project.objects.filter(application_type__category__in=category_filter).filter(tech_stack__technology__in=technology_filter).filter(price__range=(price_min_filter, price_max_filter)).distinct()
-        #     category_technology_filter_applied = True
-        #
-        # if category_filter and not category_technology_filter_applied:
-        #     projects = Project.objects.filter(application_type__category__in=category_filter).distinct()
-        #
-        # if technology_filter and not category_technology_filter_applied:
-        #     projects = Project.objects.filter(tech_stack__technology__in=technology_filter).distinct()
-        #
-        # if price_min_filter and price_max_filter:
-        #     projects = Project.objects.filter(price__)
+        paginator = self.pagination_class()
+        paginated_queryset = paginator.paginate_queryset(queryset=projects, request=request)
+        serializer = GetAllProjectSerializer(paginated_queryset, many=True)
+        # return Response(serializer.data, status=status.HTTP_200_OK)
+        data = paginator.get_paginated_response(data=serializer.data)
+        return data
 
 
     def post(self, request):

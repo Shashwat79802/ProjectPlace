@@ -30,7 +30,7 @@ class PostProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ["id", "name", "price", "description", "images", "uploaded_images", "documents", "uploaded_documents", "application_type", "tech_stack"]
-        depth = 1
+        # depth = 1
 
 
     def validate_application_type(self, data):

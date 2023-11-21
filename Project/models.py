@@ -24,6 +24,10 @@ class Project(models.Model):
     description = models.CharField(verbose_name="Project Description", max_length=2000, blank=True, null=True)
     application_type = models.ManyToManyField(to=ApplicationType, verbose_name="Type of Application Project")
     tech_stack = models.ManyToManyField(to=TechStack, verbose_name='Tech Stack')
+    created_at = models.DateTimeField(auto_created=True, auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at', 'id']
 
     def __str__(self):
         return self.name
