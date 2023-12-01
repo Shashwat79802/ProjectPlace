@@ -8,7 +8,10 @@ WORKDIR /app
 
 COPY . /app/
 
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install --upgrade pip
+RUN pip3 install virtualenv
+RUN source venv/bin/activate
+RUN pip3 install --no-cache-dir -r requirements.txt`
 
 EXPOSE 8000
 
