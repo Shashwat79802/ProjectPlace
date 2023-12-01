@@ -2,7 +2,7 @@ FROM python:3.13.0a1-bullseye
 
 ENV PYTHONUNBUFFERED 1
 
-RUN sudo apt-get update && sudo apt-get install -y libpq-dev
+RUN apt-get update && apt-get install -y libpq-dev
 
 WORKDIR /app
 
