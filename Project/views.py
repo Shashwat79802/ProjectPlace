@@ -1,5 +1,5 @@
 from .models import Project, ProjectsImage, ProjectsDocument
-from .serializers import PostProjectSerializer, GetAllProjectSerializer
+from .serializers import PostProjectSerializer, GetAllProjectSerializer, PutProjectSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -64,3 +64,19 @@ class ProjectDetail(APIView):
         project = self.get_project_instance(id)
         serializer = PostProjectSerializer(project, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    def put(self, request, id):
+        project = self.get_project_instance(id)
+        data_to_update = PutProjectSerializer(data=request.data, partial=True)
+        if data_to_update.is_valid():
+            updated_data = data_to_update.update(project, data_to_update.validated_data)
+            serialized_data = PutProjectSerializer(updated_data).data
+            return Response(serialized_data, status=status.HTTP_200_OK)
+        return Response(data_to_update.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def delete(self, request, id):
+        project = self.get_project_instance(id)
+        Project.objects.filter(id=project.id).delete()
+        return Response({'name': f'{project.name}', 'message': 'Project deleted successfully'}, status=status.HTTP_200_OK)

@@ -29,15 +29,14 @@ class PostProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ["id", "name", "price", "description", "images", "uploaded_images", "documents", "uploaded_documents", "application_type", "tech_stack"]
+        fields = ["id", "name", "price", "description", "images", "uploaded_images", "documents", "uploaded_documents",
+                  "application_type", "tech_stack"]
         # depth = 1
-
 
     def validate_application_type(self, data):
         if len(data) > 3:
             raise serializers.ValidationError("Chosen application type can't be more than 3")
         return data
-
 
     def create(self, validated_data):
         uploaded_images = validated_data.pop("uploaded_images")
@@ -72,3 +71,71 @@ class GetAllProjectSerializer(serializers.ModelSerializer):
             return first_image.image.url
         return None
 
+
+class PutProjectSerializer(serializers.ModelSerializer):
+    images = ProjectsImageSerializer(many=True, read_only=True)
+    uploaded_images = serializers.ListField(
+        child=serializers.ImageField(allow_empty_file=False, use_url=False),
+        write_only=True, required=False
+    )
+
+    documents = ProjectsDocumentSerializer(many=True, read_only=True)
+    uploaded_documents = serializers.ListField(
+        child=serializers.FileField(allow_empty_file=False, use_url=False),
+        write_only=True, required=False
+    )
+
+    deleted_images = serializers.ListField(
+        child=serializers.CharField(allow_blank=True, trim_whitespace=True),
+        write_only=True, required=False
+    )
+
+    deleted_documents = serializers.ListField(
+        child=serializers.CharField(allow_blank=True, trim_whitespace=True),
+        write_only=True, required=False
+    )
+
+    class Meta:
+        model = Project
+        fields = ["id", "name", "price", "description", "images", "uploaded_images", "documents", "uploaded_documents",
+                  "application_type", "tech_stack", 'deleted_images', 'deleted_documents']
+        # depth = 1
+
+    def validate_application_type(self, data):
+        if len(data) > 3:
+            raise serializers.ValidationError("Chosen application type can't be more than 3")
+        return data
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data['name']
+        instance.description = validated_data['description']
+        instance.price = validated_data['price']
+
+        if 'uploaded_images' in validated_data:
+            for image in validated_data['uploaded_images']:
+                ProjectsImage.objects.create(project=instance, image=image)
+
+        if 'uploaded_documents' in validated_data:
+            for docs in validated_data['uploaded_documents']:
+                ProjectsDocument.objects.create(project=instance, document=docs)
+
+        if 'deleted_images' in validated_data:
+            for deleted_image in validated_data['deleted_images']:
+                ProjectsImage.objects.filter(project_id=instance.id).filter(image=deleted_image).delete()
+
+        if 'deleted_documents' in validated_data:
+            for deleted_document in validated_data['deleted_documents']:
+                ProjectsDocument.objects.filter(project_id=instance.id).filter(image=deleted_document).delete()
+
+        instance.tech_stack.clear()
+
+        for tech in validated_data['tech_stack']:
+            instance.tech_stack.add(tech.id)
+
+        instance.application_type.clear()
+
+        for category in validated_data['application_type']:
+            instance.application_type.add(category.id)
+
+        instance.save()
+        return instance
