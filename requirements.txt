@@ -2,11 +2,13 @@ asgiref==3.7.2
 cachetools==5.3.2
 certifi==2023.7.22
 charset-normalizer==3.3.2
+distlib==0.3.7
 Django==4.2.7
 django-rest-framework==0.1.0
 django-storages==1.14.2
 djangorestframework==3.14.0
 drf-yasg==1.21.7
+filelock==3.13.1
 google-api-core==2.14.0
 google-auth==2.23.4
 google-cloud-core==2.3.3
@@ -14,10 +16,12 @@ google-cloud-storage==2.13.0
 google-crc32c==1.5.0
 google-resumable-media==2.6.0
 googleapis-common-protos==1.61.0
+gunicorn==21.2.0
 idna==3.4
 inflection==0.5.1
 packaging==23.2
 Pillow==10.1.0
+platformdirs==4.0.0
 protobuf==4.25.1
 psycopg2==2.9.9
 psycopg2-binary==2.9.9
@@ -31,3 +35,4 @@ sqlparse==0.4.4
 typing_extensions==4.8.0
 uritemplate==4.1.1
 urllib3==2.1.0
+virtualenv==20.25.0
