@@ -3,3 +3,5 @@ Project/__pycache__
 Project/migrations/*
 .vscode
 keys
+venv
+.env

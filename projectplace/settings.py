@@ -13,6 +13,9 @@ import os
 from datetime import timedelta
 from pathlib import Path
 from google.oauth2 import service_account
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,12 +25,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-kd41hl0mnm!o21y$!_ho8t@x*ah81ten=g=!p39ys*$8by_rwa'
+SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ["DEBUG"]
 
-ALLOWED_HOSTS = ['34.123.110.253', 'localhost', '127.0.0.1', '152.58.56.116', '0.0.0.0']
+ALLOWED_HOSTS = os.environ["ALLOWED_HOSTS"]
 
 
 # Application definition
@@ -135,7 +138,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # -------------Google Cloud Storage Config----------------#
 GS_BUCKET_NAME = 'project-place-bucket'
 DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-MEDIA_URL = 'gs://project-place-bucket/'
+MEDIA_URL = os.environ["MEDIA_URL"]
 GS_CREDENTIALS = service_account.Credentials.from_service_account_file('keys/projectplace-405416-bd61c6b774b0.json')
 GS_EXPIRATON = timedelta(days=1)
 
