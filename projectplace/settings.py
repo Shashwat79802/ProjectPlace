@@ -30,7 +30,7 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ["DEBUG"]
 
-ALLOWED_HOSTS = os.environ["ALLOWED_HOSTS"]
+ALLOWED_HOSTS = [os.environ["ALLOWED_HOSTS"]]
 
 
 # Application definition
@@ -129,18 +129,51 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# ------------------------------------AWS Configuration--------------------------------------
+USE_S3 = os.environ["USE_S3"]
 
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+if USE_S3:
+    AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
+    AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
+    AWS_STORAGE_BUCKET_NAME = os.environ["AWS_STORAGE_BUCKET_NAME"]
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com0'
+    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
 
-# -------------Google Cloud Storage Config----------------#
-GS_BUCKET_NAME = 'project-place-bucket'
-DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-MEDIA_URL = os.environ["MEDIA_URL"]
-GS_CREDENTIALS = service_account.Credentials.from_service_account_file('keys/projectplace-405416-bd61c6b774b0.json')
-GS_EXPIRATON = timedelta(days=1)
+    # static files storage settings
+    STATIC_LOCATION = 'app_static_files'
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/'
+    STATICFILES_STORAGE = 'projectplace.storage_backends.StaticStorage'
+
+    # media files storage settings
+    PUBLIC_MEDIA_LOCATION = 'project-place-media'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
+    DEFAULT_FILE_STORAGE =  'projectplace.storage_backends.PublicMediaStorage'
+else:
+    STATIC_URL = "/staticfiles/"
+    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+    MEDIA_URL = "/mediafiles/"
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
+
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+
+
+
+
+# -------------------------------------Previous GCP Configuration-------------------------------
+# STATIC_URL = 'static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# # MEDIA_URL = '/media/'
+# # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# # -------------Google Cloud Storage Config----------------#
+# GS_BUCKET_NAME = 'project-place-bucket'
+# DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+# MEDIA_URL = os.environ["MEDIA_URL"]
+# GS_CREDENTIALS = service_account.Credentials.from_service_account_file('keys/' + os.environ["GCP_KEY_FILE"])
+# GS_EXPIRATON = timedelta(days=1)
+# -------------------------------------Previous GCP Configuration-------------------------------
 
 
 # Default primary key field type
@@ -152,6 +185,5 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
-        # 'rest_framework_xml.renderers.XMLRenderer',
     ),
 }
