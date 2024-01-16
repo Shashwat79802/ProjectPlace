@@ -8,10 +8,20 @@ class StaticStorage(S3Boto3Storage):
     location = 'app_static_files'
     default_acl = 'public-read'
 
-
 class PublicMediaStorage(S3Boto3Storage):
     """Defines the settings to store media files of the application."""
 
-    location = 'project_place_media'
     default_acl = 'public-read'
-    file_overwrite = 'false'
+    file_overwrite = 'true'
+
+
+class PublicImageStorage(PublicMediaStorage):
+    """Defines the settings to store media files of the application."""
+
+    location = 'project-images'
+
+
+class PublicDocumentStorage(PublicMediaStorage):
+    """Defines the settings to store media files of the application."""
+
+    location = 'project-documents'

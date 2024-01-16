@@ -1,4 +1,4 @@
-Project/__pycache__
+Project/__pycache__/*
 .idea
 Project/migrations/*
 .vscode
