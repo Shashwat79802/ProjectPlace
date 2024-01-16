@@ -1,16 +1,20 @@
-from .models import Project, ProjectsImage, ProjectsDocument
-from .serializers import PostProjectSerializer, GetAllProjectSerializer, PutProjectSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import Http404
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
+
+from django.http import Http404
 from django.db.models import Q
+
+from .models import Project
+from .serializers import PostProjectSerializer, GetAllProjectSerializer, PutProjectSerializer
 from .paginatiors import CustomPaginator
 
 
 class ProjectList(APIView):
     renderer_classes = [JSONRenderer, BrowsableAPIRenderer]
+
+    # using custom way to paginate the response
     pagination_class = CustomPaginator
 
     def get(self, request):
@@ -19,8 +23,10 @@ class ProjectList(APIView):
         price_min_filter = request.query_params.get('priceMin')
         price_max_filter = request.query_params.get('priceMax')
 
+        # creating data filter to filter response and get the user the desired result
         filter_condition = Q()
 
+        # data can be filtered using the "category", "tech", "priceMin" and "priceMax" attributes
         if category_filter:
             filter_condition &= Q(application_type__category__in=category_filter)
         if technology_filter:
@@ -37,10 +43,10 @@ class ProjectList(APIView):
         else:
             projects = Project.objects.all()
 
+        # paginating the data
         paginator = self.pagination_class()
         paginated_queryset = paginator.paginate_queryset(queryset=projects, request=request)
         serializer = GetAllProjectSerializer(paginated_queryset, many=True)
-        # return Response(serializer.data, status=status.HTTP_200_OK)
         data = paginator.get_paginated_response(data=serializer.data)
         return data
 
