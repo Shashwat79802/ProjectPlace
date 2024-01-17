@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Project, ProjectsDocument, ProjectsImage, ApplicationType, TechStack
+from . import s3_object
 
 
 class ProjectsImageSerializer(serializers.ModelSerializer):
@@ -122,10 +123,13 @@ class PutProjectSerializer(serializers.ModelSerializer):
         if 'deleted_images' in validated_data:
             for deleted_image in validated_data['deleted_images']:
                 ProjectsImage.objects.filter(project_id=instance.id).filter(image=deleted_image).delete()
+                s3_object.object_remover(object="project-images/" + deleted_image)
 
         if 'deleted_documents' in validated_data:
             for deleted_document in validated_data['deleted_documents']:
-                ProjectsDocument.objects.filter(project_id=instance.id).filter(image=deleted_document).delete()
+                ProjectsDocument.objects.filter(project_id=instance.id).filter(document=deleted_document).delete()
+                s3_object.object_remover(object="project-documents/" + deleted_document)
+
 
         instance.tech_stack.clear()
 

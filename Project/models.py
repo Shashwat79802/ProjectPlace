@@ -1,8 +1,12 @@
 import uuid
+import boto3
+
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from projectplace.storage_backends import PublicDocumentStorage, PublicImageStorage
+from django.core.files.storage import default_storage
 
+from projectplace.storage_backends import PublicDocumentStorage, PublicImageStorage
+from . import s3_object
 
 class ApplicationType(models.Model):
     """Defines the type of application. Ex - Web App, Cloud App etc."""
@@ -73,6 +77,15 @@ class Project(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+    def delete(self, *args, **kwargs):
+        for imgs in self.images.all():
+            s3_object.object_remover("project-images/" + imgs.image.name)
+
+        for docs in self.documents.all():
+            s3_object.object_remover("project-documents/" + docs.document.name)
+
+        super().delete(*args, **kwargs)
 
 
 class ProjectsImage(models.Model):

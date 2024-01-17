@@ -84,5 +84,7 @@ class ProjectDetail(APIView):
 
     def delete(self, request, id):
         project = self.get_project_instance(id)
-        Project.objects.filter(id=project.id).delete()
-        return Response({'name': f'{project.name}', 'message': 'Project deleted successfully'}, status=status.HTTP_200_OK)
+        # Project.objects.filter(id=project.id).delete()
+        # return Response({'name': f'{project.name}', 'message': 'Project deleted successfully'}, status=status.HTTP_200_OK)
+        project.delete()
+        return Response({'name': f'{project.name}', 'message': 'Project deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
