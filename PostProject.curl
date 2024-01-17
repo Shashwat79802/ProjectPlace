@@ -1,0 +1,73 @@
+curl --location 'http://127.0.0.1:8000/api/v2/projects/project/' \
+--form 'uploaded_images=@"/home/shashwat/Downloads/1331863.png"' \
+--form 'uploaded_documents=@"/home/shashwat/Downloads/GrowInComXTheCloudOps Delhi MeetupSponsorshipProposal.pdf"' \
+--form 'name="Spotify"' \
+--form 'price="549000"' \
+--form 'description="A music player for your android, ios, linux and windows supported devices."' \
+--form 'application_type="1"' \
+--form 'application_type="2"' \
+--form 'tech_stack="3"' \
+--form 'tech_stack="1"' \
+--form 'tech_stack="5"' \
+--form 'tech_stack="8"'
+
+curl --location 'http://127.0.0.1:8000/api/v2/projects/project/' \
+--form 'uploaded_images=@"/home/shashwat/Downloads/1331863.png"' \
+--form 'uploaded_documents=@"/home/shashwat/Downloads/GrowInComXTheCloudOps Delhi MeetupSponsorshipProposal.pdf"' \
+--form 'name="Project1"' \
+--form 'price="10000"' \
+--form 'description="Description for Project1"' \
+--form 'application_type="1"' \
+--form 'application_type="5"' \
+--form 'application_type="4"' \
+--form 'tech_stack="8"'
+--form 'tech_stack="1"'
+--form 'tech_stack="3"'
+--form 'tech_stack="10"'
+
+curl --location 'http://127.0.0.1:8000/api/v2/projects/project/' \
+--form 'uploaded_images=@"/home/shashwat/Downloads/another_image.png"' \
+--form 'uploaded_documents=@"/home/shashwat/Downloads/AnotherDocument.pdf"' \
+--form 'name="Project2"' \
+--form 'price="30000"' \
+--form 'description="Description for Project2"' \
+--form 'application_type="2"' \
+--form 'application_type="6"' \
+--form 'tech_stack="11"'
+--form 'tech_stack="5"'
+--form 'tech_stack="6"'
+--form 'tech_stack="2"'
+
+curl --location 'http://127.0.0.1:8000/api/v2/projects/project/' \
+--form 'uploaded_images=@"/home/shashwat/Downloads/another_image3.png"' \
+--form 'uploaded_documents=@"/home/shashwat/Downloads/AnotherDocument3.pdf"' \
+--form 'name="Project3"' \
+--form 'price="2000"' \
+--form 'description="Description for Project3"' \
+--form 'application_type="1"' \
+--form 'application_type="3"' \
+--form 'application_type="5"' \
+--form 'tech_stack="5"'
+--form 'tech_stack="9"'
+
+curl --location 'http://127.0.0.1:8000/api/v2/projects/project/' \
+--form 'uploaded_images=@"/home/shashwat/Downloads/another_image4.png"' \
+--form 'uploaded_documents=@"/home/shashwat/Downloads/AnotherDocument4.pdf"' \
+--form 'name="Project4"' \
+--form 'price="250000"' \
+--form 'description="Description for Project4"' \
+--form 'application_type="1"' \
+--form 'tech_stack="8"'
+
+curl --location 'http://127.0.0.1:8000/api/v2/projects/project/' \
+--form 'uploaded_images=@"/home/shashwat/Downloads/another_image5.png"' \
+--form 'uploaded_documents=@"/home/shashwat/Downloads/AnotherDocument5.pdf"' \
+--form 'name="Project5"' \
+--form 'price="75000"' \
+--form 'description="Description for Project5"' \
+--form 'application_type="3"' \
+--form 'application_type="5"' \
+--form 'application_type="6"' \
+--form 'tech_stack="4"'
+--form 'tech_stack="13"'
+
