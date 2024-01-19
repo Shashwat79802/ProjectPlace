@@ -2,6 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.decorators import permission_classes
 
 from django.http import Http404
 from django.db.models import Q
@@ -17,11 +19,24 @@ class ProjectList(APIView):
     # using custom way to paginate the response
     pagination_class = CustomPaginator
 
+    # permission configuration, if the user is authenticated, they can both get and post projects else they can only view projects
+    # permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get(self, request):
+
         category_filter = request.query_params.getlist('category', [])
         technology_filter = request.query_params.getlist('tech', [])
         price_min_filter = request.query_params.get('priceMin')
         price_max_filter = request.query_params.get('priceMax')
+        ordering_filter = request.query_params.getlist('ordering', [])
+        
+        ordering_fields = ['price', '-price']
+
+        for filter in ordering_filter:
+            if filter not in ordering_fields:
+                return Response({
+                    "message": "Invalid ordering fields!!"
+                }, status=400)
 
         # creating data filter to filter response and get the user the desired result
         filter_condition = Q()
@@ -43,6 +58,10 @@ class ProjectList(APIView):
         else:
             projects = Project.objects.all()
 
+        if ordering_filter:
+            for filter in ordering_filter:
+                projects.order_by(filter)
+
         # paginating the data
         paginator = self.pagination_class()
         paginated_queryset = paginator.paginate_queryset(queryset=projects, request=request)
@@ -60,6 +79,10 @@ class ProjectList(APIView):
 
 
 class ProjectDetail(APIView):
+
+    # authentication configuration, if the user is authenticated, then only they can view, edit or delete any project, else no ops is allowed
+    # authentication_classes = [IsAuthenticated]
+
     def get_project_instance(self, id):
         try:
             return Project.objects.get(id=id)
