@@ -49,6 +49,7 @@ The `project` application has following endpoints:
     3. `priceMin & priceMax` - This is the price range of the projects to be returned. Can be used combinely to give projects in the desired range.
     4. `tech` - This is the tech stack of the projects to be returned. Takes input of the stack name. Ex: Python, Java, FastAPI etc. The inputs must match with the stack name in the database.
     5. `category` - This is the category of the projects to be returned. Takes input of the category name. Ex: Web App, Cloud App etc. The inputs must match with the category name in the database.
+    6. `ordering` - The ordering of the result can be done on the basis of price only.To order in descending order, add a `-` before the field name. Ex: `ordering=-price` will return the projects in descending order of price.
 
 2. `POST /api/v2/projects/project` - This endpoint creates a project.
 
