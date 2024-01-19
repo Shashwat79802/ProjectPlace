@@ -28,6 +28,6 @@ router = routers.DefaultRouter()
 urlpatterns = ([
     path('admin/', admin.site.urls),
     path('api/v2/projects/', include('Project.urls'), name='Project URLs'),
-    path('api-auth/', include('rest_framework.urls'))
+    path('api/v2/user/', include('UserManagement.urls'), name='UserManangement URLs')
 ])
 # urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT))

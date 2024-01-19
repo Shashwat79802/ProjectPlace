@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     # my apps
     'rest_framework',
     'Project.apps.ProjectConfig',
+    'UserManagement.apps.UsermanagementConfig',
     'drf_yasg'
 ]
 
@@ -93,6 +94,14 @@ DATABASES = {
         'PASSWORD': 'postgres'
     }
 }
+
+REST_FRAMEWORK = {
+    "DEFAULT_FILTER_BACKENDS": [
+        'django_filters.rest_framework.DjangoFilterBackend'
+        ],
+}
+
+AUTH_USER_MODEL = 'UserManagement.CustomUser'
 
 
 # Password validation
