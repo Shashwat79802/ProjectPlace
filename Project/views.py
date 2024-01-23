@@ -23,7 +23,6 @@ class ProjectList(APIView):
     # permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request):
-
         category_filter = request.query_params.getlist('category', [])
         technology_filter = request.query_params.getlist('tech', [])
         price_min_filter = request.query_params.get('priceMin')

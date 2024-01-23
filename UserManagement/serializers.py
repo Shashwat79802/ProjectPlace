@@ -41,6 +41,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
                         instance.set_password(new_password)
                     else:
                         raise serializers.ValidationError('Incorrect password')
+                else:
+                    raise serializers.ValidationError('Password is required to change password')
 
             instance.save()
             return instance
