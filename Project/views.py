@@ -29,14 +29,15 @@ class ProjectList(APIView):
         price_min_filter = request.query_params.get('priceMin')
         price_max_filter = request.query_params.get('priceMax')
         ordering_filter = request.query_params.getlist('ordering', [])
-        
+
         ordering_fields = ['price', '-price']
 
         for filter in ordering_filter:
             if filter not in ordering_fields:
                 return Response({
                     "message": "Invalid ordering fields!!"
-                }, status=400)
+                }, status=status.HTTP_400_BAD_REQUEST       # return a Bad Request Error code
+                )
 
         # creating data filter to filter response and get the user the desired result
         filter_condition = Q()
@@ -107,7 +108,5 @@ class ProjectDetail(APIView):
 
     def delete(self, request, id):
         project = self.get_project_instance(id)
-        # Project.objects.filter(id=project.id).delete()
-        # return Response({'name': f'{project.name}', 'message': 'Project deleted successfully'}, status=status.HTTP_200_OK)
         project.delete()
         return Response({'name': f'{project.name}', 'message': 'Project deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
