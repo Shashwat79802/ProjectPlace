@@ -1,14 +1,14 @@
 from rest_framework import serializers
 from .models import CustomUser
+from django.contrib.auth import authenticate
 
-class CustomUserSerializer(serializers.ModelSerializer):
+class SignUpSerializer(serializers.ModelSerializer):
     new_password = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = CustomUser
         fields = ['id', 'email', 'password', 'first_name', 'last_name', 'is_buyer', 'is_seller', 'new_password']
         extra_kwargs = {'password': {'write_only': True}}
-
 
     def create(self, validated_data):
         user = CustomUser(
@@ -48,3 +48,27 @@ class CustomUserSerializer(serializers.ModelSerializer):
             return instance
         else:
             raise PermissionError('Altering user profile type/email is not allowed')
+
+
+class LoginSerializer(serializers.Serializer):
+
+    email = serializers.EmailField()
+    password = serializers.CharField(max_length=128)
+
+    def validate(self, data):
+        email = data.get("email")
+        password = data.get("password")
+
+        if email and password:
+            user = authenticate(email=email, password=password)
+
+            if user is None:
+                raise serializers.ValidationError("Invalid email/password combination!!")
+
+            if not user.is_active:
+                raise serializers.ValidationError("The user is deactivated!!")
+        else:
+            raise serializers.ValidationError("Email/Password not provided!!")
+
+        return data
+

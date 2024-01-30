@@ -3,11 +3,11 @@ from rest_framework.views import APIView
 from rest_framework import status
 
 from .models import CustomUser
-from .serializers import CustomUserSerializer
+from .serializers import SignUpSerializer, LoginSerializer
 
-class UserView(APIView):
+class SignUpView(APIView):
 
-    serializer_class = CustomUserSerializer
+    serializer_class = SignUpSerializer
 
     def get_user_by_email(self, email):
         try:
@@ -22,7 +22,7 @@ class UserView(APIView):
                 status=status.HTTP_409_CONFLICT     # return a Conflict error code which is 409 conflict
             )
 
-        serializer = CustomUserSerializer(data=request.data)
+        serializer = SignUpSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(
@@ -33,11 +33,11 @@ class UserView(APIView):
                     data=serializer.errors,
                     status=status.HTTP_400_BAD_REQUEST
                 )
-    
+
     def put(self, request):
         user = self.get_user_by_email(email=request.data['email'])
         if user:
-            data_to_update = CustomUserSerializer(instance=user, data=request.data, partial=True)
+            data_to_update = SignUpSerializer(instance=user, data=request.data, partial=True)
             if data_to_update.is_valid(raise_exception=True):
                 try:
                     updated_data = data_to_update.update(instance=user, validated_data=data_to_update.validated_data)
@@ -46,7 +46,7 @@ class UserView(APIView):
                         data={"message": "Altering user profile type/email is not allowed"},
                         status=status.HTTP_406_NOT_ACCEPTABLE)
 
-                updated_data = CustomUserSerializer(updated_data).data
+                updated_data = SignUpSerializer(updated_data).data
                 return Response(
                         data={"message": "Data updated successfully", "data": updated_data},
                         status=status.HTTP_202_ACCEPTED
@@ -60,3 +60,22 @@ class UserView(APIView):
                 data={"message": "Invalid Email!!"},
                 status=status.HTTP_404_NOT_FOUND
                 )
+
+
+class LoginView(APIView):
+
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+
+        if serializer.is_valid():
+            return Response(
+                data={"message": "User logged in!!"},
+                status=status.HTTP_200_OK
+            )
+
+        return Response(
+            data={"message": str(serializer.errors['non_field_errors'][0])},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
